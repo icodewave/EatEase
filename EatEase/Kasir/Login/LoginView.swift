@@ -1,57 +1,75 @@
-//
-//  LoginView.swift
-//  EatEase
-//
-//  Created by iCodeWave Community on 20/05/25.
-//
-
 import SwiftUI
 
-@MainActor
-final class LoginViewModel: ObservableObject {
-    
-    @Published var email: String = ""
-    @Published var password: String = ""
-}
-
 struct LoginView: View {
-    @StateObject private var viewModel = LoginViewModel()
-    
+    @StateObject var viewModel: LoginViewModel
+
+    init(authManager: AuthenticationManager) {
+        _viewModel = StateObject(wrappedValue: LoginViewModel(authManager: authManager))
+    }
+
     var body: some View {
-        VStack {
-            TextField("Email..", text: $viewModel.email)
+        VStack(spacing: 20) {
+            Text("EatEase Login")
+                .font(.largeTitle)
+                .fontWeight(.bold)	
+                .padding(.bottom, 30)
+
+            TextField("Email", text: $viewModel.email)
+                .keyboardType(.emailAddress)
+                .autocapitalization(.none)
+                .disableAutocorrection(true)
                 .padding()
-                .background(Color.gray.opacity(0.4))
-                .cornerRadius(10)
-            
-            SecureField("Password..", text: $viewModel.password)
+                .background(Color(.secondarySystemBackground))
+                .cornerRadius(8)
+
+            SecureField("Password", text: $viewModel.password)
                 .padding()
-                .background(Color.gray.opacity(0.4))
-                .cornerRadius(10)
-            
-            Button {
-                
-            } label: {
-                Text("Sign In")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                    .frame(height: 50)
-                    .frame(maxWidth: .infinity)
-                    .background(Color.blue)
-                    .cornerRadius(10)
+                .background(Color(.secondarySystemBackground))
+                .cornerRadius(8)
+
+            if let errorMessage = viewModel.errorMessage {
+                Text(errorMessage)
+                    .foregroundColor(.red)
+                    .font(.caption)
+                    .padding(.top, 5)
+                    .multilineTextAlignment(.center)
             }
-            
+
+            if viewModel.isLoading {
+                ProgressView()
+                    .padding(.top, 20)
+            } else {
+                Button(action: {
+                    viewModel.login()
+                }) {
+                    Text("Login")
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .cornerRadius(8)
+                }
+                .padding(.top, 20)
+
+//                Button(action: {
+//                    viewModel.signUp()
+//                }) {
+//                    Text("Buat Akun Baru")
+//                        .foregroundColor(.white)
+//                        .frame(maxWidth: .infinity)
+//                        .padding()
+//                        .background(Color.green)
+//                        .cornerRadius(8)
+//                }
+            }
             Spacer()
         }
         .padding()
-        .navigationTitle(Text("Login"))
     }
 }
 
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationStack {
-            LoginView()
-        }
+        LoginView(authManager: AuthenticationManager())
     }
 }

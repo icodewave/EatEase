@@ -1,35 +1,56 @@
-//
-//  AuthenticationManager.swift
-//  EatEase
-//
-//  Created by iCodeWave Community on 20/05/25.
-//
-
 import Foundation
-import FirebaseAuth
+import FirebaseAuth // Import FirebaseAuth
 
-struct AuthDataResultModel {
-    let uid: String
-    let email: String?
-    let photoURL: String?
-    
-    init(user: User) {
-        self.uid = user.uid
-        self.email = user.email
-        self.photoURL = user.photoURL?.absoluteString
-    }
-}
+class AuthenticationManager: ObservableObject {
+    @Published var userSession: FirebaseAuth.User?
+    private var authStateHandler: AuthStateDidChangeListenerHandle?
 
-final class AuthenticationManager {
-
-    static let shared = AuthenticationManager()
-    private init() {}
-    
-    func getAuthenticatedUser() throws -> AuthDataResultModel {
-        guard let user = Auth.auth().currentUser else {
-            throw URLError(.badServerResponse)
+    init() {
+        // Listener untuk perubahan status otentikasi
+        authStateHandler = Auth.auth().addStateDidChangeListener { [weak self] _, user in
+            self?.userSession = user
+            if let user = user {
+                print("User is signed in with uid: \(user.uid)")
+            } else {
+                print("User is signed out.")
+            }
         }
-        return AuthDataResultModel(user: user)
+    }
+
+    deinit {
+        if let handle = authStateHandler {
+            Auth.auth().removeStateDidChangeListener(handle)
+        }
+    }
+
+    func signIn(email: String, password: String, completion: @escaping (Error?) -> Void) {
+        Auth.auth().signIn(withEmail: email, password: password) { result, error in
+            if let error = error {
+                completion(error)
+                return
+            }
+            // userSession akan otomatis terupdate oleh listener
+            completion(nil)
+        }
+    }
+
+//    func signUp(email: String, password: String, completion: @escaping (Error?) -> Void) {
+//        Auth.auth().createUser(withEmail: email, password: password) { result, error in
+//            if let error = error {
+//                completion(error)
+//                return
+//            }
+//            // userSession akan otomatis terupdate oleh listener
+//            completion(nil)
+//        }
+//    }
+
+    func signOut() {
+        do {
+            try Auth.auth().signOut()
+            // userSession akan otomatis terupdate ke nil oleh listener
+        } catch {
+            print("Error signing out: \(error.localizedDescription)")
+        }
     }
 }
-
