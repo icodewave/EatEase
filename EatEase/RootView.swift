@@ -6,7 +6,7 @@ struct RootView: View {
     var body: some View {
         Group {
             if authManager.userSession != nil {
-                ContentView()
+                LandingPageView()
                     .environmentObject(authManager)
             } else {
                 // Langsung tampilkan LoginView karena Loginscreen.swift sudah dihapus

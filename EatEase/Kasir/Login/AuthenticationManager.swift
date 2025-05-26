@@ -1,12 +1,11 @@
 import Foundation
-import FirebaseAuth // Import FirebaseAuth
+import FirebaseAuth
 
 class AuthenticationManager: ObservableObject {
     @Published var userSession: FirebaseAuth.User?
     private var authStateHandler: AuthStateDidChangeListenerHandle?
 
     init() {
-        // Listener untuk perubahan status otentikasi
         authStateHandler = Auth.auth().addStateDidChangeListener { [weak self] _, user in
             self?.userSession = user
             if let user = user {
@@ -29,18 +28,16 @@ class AuthenticationManager: ObservableObject {
                 completion(error)
                 return
             }
-            // userSession akan otomatis terupdate oleh listener
             completion(nil)
         }
     }
-
+//
 //    func signUp(email: String, password: String, completion: @escaping (Error?) -> Void) {
 //        Auth.auth().createUser(withEmail: email, password: password) { result, error in
 //            if let error = error {
 //                completion(error)
 //                return
 //            }
-//            // userSession akan otomatis terupdate oleh listener
 //            completion(nil)
 //        }
 //    }
@@ -48,7 +45,6 @@ class AuthenticationManager: ObservableObject {
     func signOut() {
         do {
             try Auth.auth().signOut()
-            // userSession akan otomatis terupdate ke nil oleh listener
         } catch {
             print("Error signing out: \(error.localizedDescription)")
         }

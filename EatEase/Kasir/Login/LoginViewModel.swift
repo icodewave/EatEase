@@ -6,13 +6,13 @@ class LoginViewModel: ObservableObject {
     @Published var password = ""
     @Published var errorMessage: String?
     @Published var isLoading = false
-
+    
     private var authManager: AuthenticationManager
-
+    
     init(authManager: AuthenticationManager) {
         self.authManager = authManager
     }
-
+    
     func login() {
         isLoading = true
         errorMessage = nil
@@ -26,18 +26,4 @@ class LoginViewModel: ObservableObject {
             }
         }
     }
-
-//    func signUp() {
-//        isLoading = true
-//        errorMessage = nil
-//        authManager.signUp(email: email, password: password) { [weak self] error in
-//            DispatchQueue.main.async {
-//                self?.isLoading = false
-//                if let error = error {
-//                    self?.errorMessage = error.localizedDescription
-//                }
-//                // Jika sukses, RootView akan otomatis mengarahkan ke ContentView
-//            }
-//        }
-//    }
 }

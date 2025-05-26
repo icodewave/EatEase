@@ -50,17 +50,6 @@ struct LoginView: View {
                         .cornerRadius(8)
                 }
                 .padding(.top, 20)
-
-//                Button(action: {
-//                    viewModel.signUp()
-//                }) {
-//                    Text("Buat Akun Baru")
-//                        .foregroundColor(.white)
-//                        .frame(maxWidth: .infinity)
-//                        .padding()
-//                        .background(Color.green)
-//                        .cornerRadius(8)
-//                }
             }
             Spacer()
         }
