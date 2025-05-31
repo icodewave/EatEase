@@ -7,21 +7,21 @@
 
 
 import SwiftUI
-import FirebaseFirestore // Untuk Timestamp
+import FirebaseFirestore
 
 struct CheckoutView: View {
-    @ObservedObject var viewModel: LandingPageViewModel // Akses ke currentCart dan fungsi placeOrder
-    @EnvironmentObject var authManager: AuthenticationManager // Untuk userId
+    @ObservedObject var viewModel: LandingPageViewModel
+    @EnvironmentObject var authManager: AuthenticationManager
     @Environment(\.dismiss) var dismiss
 
     @State private var namaPelanggan: String = ""
     @State private var nomorMeja: String = ""
-    @State private var metodePembayaran: String = "Cash" // Default
+    @State private var metodePembayaran: String = "Cash"
     @State private var isPlacingOrder: Bool = false
     @State private var orderError: String? = nil
     @State private var orderSuccess: Bool = false
 
-    let paymentMethods = ["Cash", "Card", "Transfer", "QRIS"] // Contoh metode
+    let paymentMethods = ["Cash", "Card", "Transfer", "QRIS"]
 
     var body: some View {
         NavigationView {
@@ -39,24 +39,48 @@ struct CheckoutView: View {
                     }
                 }
 
+                // MODIFIKASI DI SINI: Bagian Ringkasan Pesanan
                 Section(header: Text("Ringkasan Pesanan")) {
-                    if let cart = viewModel.currentCart {
-                        ForEach(cart.items) { item in
-                            HStack {
-                                Text("\(item.nama) (\(item.kuantitas)x)")
-                                Spacer()
-                                Text("Rp \(Int(item.harga * Double(item.kuantitas)))")
+                    if let cart = viewModel.currentCart, !cart.items.isEmpty {
+                        // Gunakan List untuk fungsionalitas onDelete
+                        List {
+                            ForEach(cart.items) { item in
+                                HStack {
+                                    VStack(alignment: .leading) {
+                                        Text(item.nama)
+                                            .font(.headline)
+                                        Text("Qty: \(item.kuantitas) x Rp \(Int(item.harga))")
+                                            .font(.caption)
+                                        if let variant = item.variant, !variant.isEmpty {
+                                            Text("Variant: \(variant)")
+                                                .font(.caption)
+                                                .foregroundColor(.gray)
+                                        }
+                                        if let notes = item.notes, !notes.isEmpty {
+                                            Text("Notes: \(notes)")
+                                                .font(.caption)
+                                                .italic()
+                                                .foregroundColor(.gray)
+                                        }
+                                    }
+                                    Spacer()
+                                    Text("Rp \(Int(item.harga * Double(item.kuantitas)))")
+                                }
                             }
-                        }
-                        HStack {
-                            Text("Total").bold()
-                            Spacer()
-                            Text("Rp \(Int(cart.totalAmount))").bold()
+                            .onDelete(perform: deleteItems) // Tambahkan modifier onDelete
+
+                            // Tampilkan total di luar ForEach, tapi masih di dalam List atau Section
+                            HStack {
+                                Text("Total").bold()
+                                Spacer()
+                                Text("Rp \(Int(cart.totalAmount))").bold()
+                            }
                         }
                     } else {
                         Text("Keranjang kosong.")
                     }
                 }
+                // SELESAI MODIFIKASI
 
                 if let error = orderError {
                     Text("Error: \(error)")
@@ -67,7 +91,6 @@ struct CheckoutView: View {
                     Text("Pesanan berhasil dibuat!")
                         .foregroundColor(.green)
                         .onAppear {
-                            // Auto dismiss setelah beberapa detik
                             DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                                 dismiss()
                             }
@@ -92,8 +115,28 @@ struct CheckoutView: View {
                         dismiss()
                     }
                 }
+                // Opsional: Tambahkan tombol Edit Mode jika ingin UI swipe yang lebih jelas
+                // ToolbarItem(placement: .navigationBarTrailing) {
+                //     EditButton()
+                // }
             }
         }
+    }
+
+    // Fungsi untuk menghapus item dari List
+    private func deleteItems(at offsets: IndexSet) {
+        guard let cart = viewModel.currentCart else { return }
+        
+        // Dapatkan ID item yang akan dihapus berdasarkan offsets
+        let itemsToDelete = offsets.map { cart.items[$0] }
+        
+        for item in itemsToDelete {
+            viewModel.removeItemFromCart(cartItemId: item.id)
+        }
+        
+        // Jika setelah penghapusan keranjang menjadi kosong dan nama pelanggan/meja sudah terisi,
+        // mungkin user ingin membatalkan, atau kita biarkan saja tombol "Buat Pesanan" menjadi disabled.
+        // UI akan update otomatis.
     }
 
     func placeOrderAction() {
@@ -112,7 +155,7 @@ struct CheckoutView: View {
             namaPelanggan: namaPelanggan,
             nomorMeja: nomorMeja,
             metodePembayaran: metodePembayaran,
-            status: "pending" // Atau status awal lainnya, misal "diproses"
+            status: "pending"
         ) { result in
             isPlacingOrder = false
             switch result {
@@ -127,6 +170,7 @@ struct CheckoutView: View {
         }
     }
 }
+
 
 // Preview (opsional)
 struct CheckoutView_Previews: PreviewProvider {
