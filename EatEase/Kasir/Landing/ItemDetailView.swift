@@ -49,6 +49,10 @@ struct ItemDetailView: View {
     var body: some View {
         NavigationView {
             VStack(alignment: .leading, spacing: 16) {
+                Text(menuItem.desc)
+                    .font(.body)
+                    .foregroundColor(.secondary)
+                
                 Text("VARIANT")
                     .font(.headline)
                     .padding(.top)
