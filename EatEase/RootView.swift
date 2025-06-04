@@ -10,7 +10,9 @@ struct RootView: View {
                     .environmentObject(authManager)
             } else {
                 // Langsung tampilkan LoginView karena Loginscreen.swift sudah dihapus
-                LoginView(authManager: authManager)
+//                LoginView(authManager: authManager)
+                ParentLoginFlowView()
+                    .environmentObject(authManager)
             }
         }
         .onAppear {
