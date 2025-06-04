@@ -13,7 +13,7 @@ struct MenuItemRow: View {
 
     var body: some View {
         HStack {
-            Image(systemName: "photo.on.rectangle.angled") // Placeholder
+            Image(item.imageName) // Placeholder
                 .resizable()
                 .scaledToFit()
                 .frame(width: 60, height: 60)

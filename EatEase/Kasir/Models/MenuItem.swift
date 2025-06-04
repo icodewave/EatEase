@@ -15,6 +15,7 @@ struct MenuItem: Identifiable, Codable, Hashable { // Tambahkan Hashable jika ak
     var harga: Double // Gunakan Double untuk harga agar lebih fleksibel
     var kategori: String
     var desc: String
+    var imageName: String
     // 'stok' tidak ada di struktur Firestore Anda, jadi tidak dimasukkan di sini.
     // Jika ada URL gambar, tambahkan properti seperti 'gambarUrl: String?'
 }
