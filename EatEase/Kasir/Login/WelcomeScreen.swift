@@ -18,8 +18,8 @@ struct WelcomeScreen: View {
         ZStack {
             // Latar belakang gradasi
             LinearGradient(gradient: Gradient(colors: [
-                Color(red: 7/255, green: 91/255, blue: 94/255), // Warna pertama: #075B5E
-                Color(red: 159/255, green: 200/255, blue: 126/255) // Warna kedua: #9FC87E
+                Color.blue,  
+                Color.white
             ]), startPoint: .topLeading, endPoint: .bottomTrailing)
             .edgesIgnoringSafeArea(.all)
             

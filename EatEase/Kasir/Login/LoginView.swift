@@ -78,12 +78,12 @@ struct LoginView: View {
         ZStack {
             // Background dengan warna gradasi atau solid seperti di referensi
             // Anda bisa menyesuaikannya dengan warna yang lebih spesifik jika diinginkan
-//            LinearGradient(gradient: Gradient(colors: [Color.red.opacity(0.8), Color.orange.opacity(0.8)]), startPoint: .topLeading, endPoint: .bottomTrailing)
-//                .edgesIgnoringSafeArea(.all)
+            //            LinearGradient(gradient: Gradient(colors: [Color.red.opacity(0.8), Color.orange.opacity(0.8)]), startPoint: .topLeading, endPoint: .bottomTrailing)
+            //                .edgesIgnoringSafeArea(.all)
             
             LinearGradient(gradient: Gradient(colors: [
-                Color(red: 7/255, green: 91/255, blue: 94/255), // Warna pertama: #075B5E
-                Color(red: 159/255, green: 200/255, blue: 126/255) // Warna kedua: #9FC87E
+                Color.blue,
+                Color.white
             ]), startPoint: .topLeading, endPoint: .bottomTrailing)
             .edgesIgnoringSafeArea(.all)
             
@@ -171,10 +171,11 @@ struct LoginView: View {
             }
         }
     }
-    
-    struct LoginView_Previews: PreviewProvider {
-        static var previews: some View {
-            LoginView(authManager: AuthenticationManager())
-        }
+}
+
+struct LoginView_Previews: PreviewProvider {
+    static var previews: some View {
+        LoginView(authManager: AuthenticationManager())
     }
 }
+
