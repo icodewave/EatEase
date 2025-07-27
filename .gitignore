@@ -1,0 +1,32 @@
+# Ignore Xcode project files
+*.xcuserstate
+*.xcuserdata/
+*.xcworkspace/
+
+# Ignore build products
+build/
+DerivedData/
+
+# Ignore sensitive files
+GoogleService-Info.plist
+*.p12
+*.key
+*.crt
+*.pem
+.env
+
+# Ignore SwiftPM
+.swiftpm/
+Package.resolved
+
+# Ignore user-specific files
+.DS_Store
+*.swp
+*.swo
+
+# Ignore logs
+*.log
+
+# Ignore by default
+.idea/
+.vscode/
